@@ -6,7 +6,7 @@ export function UserBar({ children }: { children: React.ReactNode }) {
             <div className="text-center bg-gray-300 h-20 flex items-center justify-center">
                 <h2 className="text-xl text-blue-600 font-semibold">My Team</h2>
             </div>
-            <div className="flex-1 overflow-y-scroll py-4 flex flex-col gap-y-2">
+            <div className="flex-1 overflow-y-scroll py-4 flex flex-col gap-y-10">
                 {children}
             </div>
             <div className="text-center p-6 bg-gray-300">
