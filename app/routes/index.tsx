@@ -1,30 +1,58 @@
 import { Layout } from '~/components/Layout'
-import { LoaderFunction } from 'remix'
+import { json, LoaderFunction, useLoaderData } from 'remix'
 import { requireUserId } from '~/util/session.server'
 import { UserBar } from '~/components/UserBar'
 import { SearchBar } from '~/components/SearchBar'
 import { RecentKudosBar } from '~/components/RecentKudosBar'
+import { prisma } from '~/util/db.server'
+import { UserIdWithProfile } from '~/util/interfaces'
+
+interface LoaderResponse {
+  users: UserIdWithProfile[],
+  recentKudos: { recipient: UserIdWithProfile }[]
+}
 
 // If the user isn't logged in, redirect to the login screen
 export const loader: LoaderFunction = async ({ request }) => {
   // Handles redirect if not authenticated
-  await requireUserId(request)
-  return null
+  const userId = await requireUserId(request)
+
+  // Select all the users for the users bar (except yourself)
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      profile: true
+    },
+    where: {
+      id: { not: userId }
+    }
+  })
+
+  // Select the most recent three kudos
+  const recentKudos = await prisma.kudos.findMany({
+    take: 3,
+    orderBy: {
+      createdAt: 'desc'
+    },
+    select: {
+      recipient: {
+        select: {
+          id: true,
+          profile: true
+        }
+      }
+    }
+  })
+
+  return json({ users, recentKudos })
 }
 
 export default function Index() {
+  const { recentKudos, users } = useLoaderData<LoaderResponse>()
   return <Layout>
     <div className="h-full flex">
       {/* Left bar */}
-      <UserBar>
-        {
-          new Array(30).fill(1).map((el, i) => (
-            <div key={i} className="rounded-full h-24 w-24 bg-gray-400 mx-auto flex-shrink-0">
-              {/* Profile Pictures */}
-            </div>
-          ))
-        }
-      </UserBar>
+      <UserBar users={users} />
       {/* Right Side */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
@@ -34,7 +62,7 @@ export default function Index() {
           <div className="w-full">
 
           </div>
-          <RecentKudosBar />
+          <RecentKudosBar kudos={recentKudos} />
         </div>
       </div>
     </div>

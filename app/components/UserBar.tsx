@@ -1,13 +1,16 @@
-import React from "react";
+import { UserCircle } from '~/components/UserCircle'
+import { UserIdWithProfile } from '~/util/interfaces'
 
-export function UserBar({ children }: { children: React.ReactNode }) {
+export function UserBar({ users }: {
+    users: UserIdWithProfile[]
+}) {
     return (
         <div className="w-1/6 bg-gray-200 flex flex-col">
             <div className="text-center bg-gray-300 h-20 flex items-center justify-center">
                 <h2 className="text-xl text-blue-600 font-semibold">My Team</h2>
             </div>
             <div className="flex-1 overflow-y-scroll py-4 flex flex-col gap-y-10">
-                {children}
+                {users.map((user) => <UserCircle key={user.id} profile={user.profile} />)}
             </div>
             <div className="text-center p-6 bg-gray-300">
                 <form action="/logout" method="post">
