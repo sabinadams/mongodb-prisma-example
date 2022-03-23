@@ -44,7 +44,7 @@ type Profile {
   firstName      String
   lastName       String
   profilePicture String?
-  role           Department?
+  department     Department?
 }
 
 enum Department {
