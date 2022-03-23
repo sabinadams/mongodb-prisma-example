@@ -1,7 +1,11 @@
+import { UserWithProfile } from "~/util/interfaces"
 import { SearchBox } from "./SearchBox"
 import { SelectBox } from "./SelectBox"
+import { useNavigate } from "remix"
 
-export function SearchBar() {
+export function SearchBar({ user }: { user: UserWithProfile }) {
+    const navigate = useNavigate()
+
     return (
         <form className="w-full px-6 flex items-center gap-x-4 border-b-4 border-b-blue-900 border-opacity-30 h-20">
             <SearchBox className="w-full rounded-xl px-3 py-2" containerClassName='w-2/5' />
@@ -14,8 +18,8 @@ export function SearchBar() {
                 Search
             </button>
             <div className="flex-1" />
-            <div className="h-14 w-14 bg-gray-400 rounded-full">
-                {/* Profile Picture */}
+            <div className="h-14 w-14 bg-gray-400 rounded-full flex justify-center items-center" onClick={() => navigate('/home/profile')}>
+                <h2>{user.profile.firstName.charAt(0).toUpperCase()}{user.profile.lastName.charAt(0).toUpperCase()}</h2>
             </div>
         </form>
     )

@@ -1,19 +1,7 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "./db.server";
 import { createCookieSessionStorage, json, redirect } from "remix";
-import { Profile, User } from "@prisma/client";
-
-type LoginForm = {
-  email: string;
-  password: string;
-};
-
-type RegisterForm = {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-};
+import { LoginForm, RegisterForm } from "./interfaces";
 
 // We need to define a session secret
 const sessionSecret = process.env.SESSION_SECRET;
@@ -132,7 +120,7 @@ export async function getUser(request: Request) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true },
+      select: { id: true, email: true, profile: true },
     });
     return user;
   } catch {

@@ -1,6 +1,21 @@
-import { Profile } from "./db.server";
+import { Profile, User } from "./db.server";
 
-export interface UserIdWithProfile {
-  id: string;
+export interface UserWithProfile extends Partial<User> {
+  profile: Profile;
+}
+
+export interface LoginForm {
+  email: string;
+  password: string;
+}
+
+export interface RegisterForm {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface UserData extends Partial<User> {
   profile: Profile;
 }

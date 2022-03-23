@@ -1,8 +1,8 @@
 import { UserCircle } from '~/components/UserCircle'
-import { UserIdWithProfile } from '~/util/interfaces'
+import { UserWithProfile } from '~/util/interfaces'
 
 export function UserBar({ users }: {
-    users: UserIdWithProfile[]
+    users: UserWithProfile[]
 }) {
     return (
         <div className="w-1/6 bg-gray-200 flex flex-col">

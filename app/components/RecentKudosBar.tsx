@@ -1,9 +1,8 @@
-import { Profile } from '~/util/db.server'
-import { UserIdWithProfile } from '~/util/interfaces';
+import { UserWithProfile } from '~/util/interfaces';
 import { UserCircle } from './UserCircle';
 
 export function RecentKudosBar({ kudos }: {
-    kudos: { recipient: UserIdWithProfile }[]
+    kudos: { recipient: UserWithProfile }[]
 }) {
     return (
         <div className="w-1/5 border-l-4 border-l-yellow-300 flex flex-col items-center">
