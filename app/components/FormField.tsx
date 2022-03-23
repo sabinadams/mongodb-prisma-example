@@ -22,6 +22,7 @@ export function FormField({
     useEffect(() => {
         setErrorText(error)
     }, [error])
+
     return <>
         <label htmlFor={htmlFor} className="text-blue-600 font-semibold">{label}</label>
         <input onChange={e => {
