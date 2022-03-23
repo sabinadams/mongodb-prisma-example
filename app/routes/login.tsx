@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ActionFunction, json, LoaderFunction, redirect, useActionData } from 'remix'
 import { FormField } from '~/components/FormField'
 import { Layout } from '~/components/Layout'
-import { getUser } from '~/util/session.server'
+import { createUserSession, getUser, login } from '~/util/session.server'
 import { validateEmail, validatePassword, validateName } from '~/util/validators.server'
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -41,8 +41,10 @@ export const action: ActionFunction = async ({ request }) => {
     const errors = {
         email: validateEmail(email),
         password: validatePassword(password),
-        firstName: validateName(firstName as string || ''),
-        lastName: validateName(lastName as string || ''),
+        ...(action === 'register' ? {
+            firstName: validateName(firstName as string || ''),
+            lastName: validateName(lastName as string || ''),
+        } : {})
     };
 
     //  If there were any errors, return them
@@ -51,9 +53,9 @@ export const action: ActionFunction = async ({ request }) => {
 
     switch (action) {
         case 'login': {
-            // const user = await login({ email, password })
-            // if (!user) return json({ error: `Incorrect login` }, { status: 400 })
-            // return createUserSession(user.id, '/');
+            const user = await login({ email, password })
+            if (!user) return json({ error: `Incorrect login` }, { status: 400 })
+            return createUserSession(user.id, '/');
         }
         case 'register': {
             // const exists = await db.user.count({ where: { email } })
@@ -73,6 +75,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
     const actionData = useActionData()
     const [errors, setErrors] = useState(actionData?.errors || {})
+    const [formError, setFormError] = useState(actionData?.error || '')
     const [action, setAction] = useState(actionData?.form || 'login')
     const formRef = useRef<HTMLFormElement>(null)
     const firstLoad = useRef(true)
@@ -97,9 +100,16 @@ export default function Login() {
                 lastName: ''
             }
             setErrors(newState)
+            setFormError('')
             setFormData(newState)
         }
     }, [action])
+
+    useEffect(() => {
+        if (!firstLoad.current) {
+            setFormError('')
+        }
+    }, [formData])
 
     useEffect(() => {
         // We don't want to reset errors on page load because we want to see them
@@ -121,7 +131,7 @@ export default function Login() {
 
             <form ref={formRef} method="POST" className="rounded-2xl bg-gray-200 p-6 w-96">
                 <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
-                    {actionData?.error ? actionData?.error : ''}
+                    {formError}
                 </div>
                 <input type="hidden" name="action" value={action} />
                 {/* Email */}
