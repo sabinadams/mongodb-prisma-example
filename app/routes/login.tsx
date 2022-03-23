@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ActionFunction, json, LoaderFunction, redirect, useActionData } from 'remix'
 import { FormField } from '~/components/FormField'
 import { Layout } from '~/components/Layout'
-import { createUserSession, getUser, login } from '~/util/session.server'
+import { createUserSession, getUser, login, register } from '~/util/session.server'
 import { validateEmail, validatePassword, validateName } from '~/util/validators.server'
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -15,8 +15,8 @@ export const action: ActionFunction = async ({ request }) => {
     const action = form.get("action");
     const email = form.get("email");
     const password = form.get("password");
-    const firstName = form.get("firstName");
-    const lastName = form.get("lastName");
+    let firstName = form.get("firstName");
+    let lastName = form.get("lastName");
 
     // If not all data was passed, error
     if (
@@ -58,15 +58,9 @@ export const action: ActionFunction = async ({ request }) => {
             return createUserSession(user.id, '/');
         }
         case 'register': {
-            // const exists = await db.user.count({ where: { email } })
-            // if (exists) {
-            //     return json({ error: `User already exists with that email` }, { status: 400 })
-            // }
-            // const user = await createUser({ email, password });
-            // if (!user) {
-            //     return json({ error: `Something went wrong trying to create a new user.`, fields: { email, password } }, { status: 400 });
-            // }
-            // return createUserSession(user.id, '/');
+            firstName = firstName as string
+            lastName = lastName as string
+            return await register({ email, password, firstName, lastName })
         }
         default:
             return json({ error: `Invalid Form Data` }, { status: 400 });

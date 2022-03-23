@@ -6,6 +6,7 @@ import { requireUserId } from '~/util/session.server'
 export const loader: LoaderFunction = async ({ request }) => {
   // Handles redirect if not authenticated
   await requireUserId(request)
+  return null
 }
 
 export default function Index() {

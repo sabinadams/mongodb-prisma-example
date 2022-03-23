@@ -1,10 +1,18 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "./db.server";
-import { createCookieSessionStorage, redirect } from "remix";
+import { createCookieSessionStorage, json, redirect } from "remix";
+import { Profile, User } from "@prisma/client";
 
 type LoginForm = {
   email: string;
   password: string;
+};
+
+type RegisterForm = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
 };
 
 // We need to define a session secret
@@ -36,6 +44,44 @@ export async function login({ email, password }: LoginForm) {
   if (!(await bcrypt.compare(password, user.password))) return null;
 
   return { id: user.id, email };
+}
+
+// Create a new user and creates a session
+export async function register(user: RegisterForm) {
+  const exists = await prisma.user.count({ where: { email: user.email } });
+  if (exists) {
+    return json(
+      { error: `User already exists with that email` },
+      { status: 400 }
+    );
+  }
+  const newUser = await createUser(user);
+  if (!newUser) {
+    return json(
+      {
+        error: `Something went wrong trying to create a new user.`,
+        fields: { email: user.email, password: user.password },
+      },
+      { status: 400 }
+    );
+  }
+  return createUserSession(newUser.id, "/");
+}
+
+// Saves a new database
+async function createUser(user: RegisterForm) {
+  const passwordHash = await bcrypt.hash(user.password, 10);
+  const newUser = await prisma.user.create({
+    data: {
+      email: user.email,
+      password: passwordHash,
+      profile: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    },
+  });
+  return { id: newUser.id, email: user.email };
 }
 
 // Create a session in our session storage bucket
