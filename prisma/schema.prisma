@@ -44,10 +44,10 @@ type Profile {
   firstName      String
   lastName       String
   profilePicture String?
-  role           Roles?
+  role           Department?
 }
 
-enum Roles {
+enum Department {
   MARKETING
   SALES
   ENGINEERING

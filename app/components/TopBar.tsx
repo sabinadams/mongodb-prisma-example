@@ -3,7 +3,7 @@ import { SearchBox } from "./SearchBox"
 import { SelectBox } from "./SelectBox"
 import { useNavigate } from "remix"
 
-export function SearchBar({ user }: { user: UserWithProfile }) {
+export function TopBar({ user }: { user: UserWithProfile }) {
     const navigate = useNavigate()
 
     return (
@@ -18,7 +18,7 @@ export function SearchBar({ user }: { user: UserWithProfile }) {
                 Search
             </button>
             <div className="flex-1" />
-            <div className="h-14 w-14 bg-gray-400 rounded-full flex justify-center items-center" onClick={() => navigate('/home/profile')}>
+            <div className="cursor-pointer h-14 w-14 bg-gray-400 rounded-full flex justify-center items-center transition duration-300 ease-in-out hover:scale-110 hover:border-2 hover:border-yellow-300" onClick={() => navigate('/home/profile')}>
                 <h2>{user.profile.firstName.charAt(0).toUpperCase()}{user.profile.lastName.charAt(0).toUpperCase()}</h2>
             </div>
         </form>

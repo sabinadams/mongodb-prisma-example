@@ -2,7 +2,7 @@ import { Layout } from '~/components/Layout'
 import { json, LoaderFunction, useLoaderData, Outlet } from 'remix'
 import { getUser, requireUserId } from '~/util/session.server'
 import { UserBar } from '~/components/UserBar'
-import { SearchBar } from '~/components/SearchBar'
+import { TopBar } from '~/components/TopBar'
 import { RecentKudosBar } from '~/components/RecentKudosBar'
 import { prisma } from '~/util/db.server'
 import { UserWithProfile } from '~/util/interfaces'
@@ -60,7 +60,7 @@ export default function Index() {
         <div className="h-full flex">
             <UserBar users={users} />
             <div className="flex-1 flex flex-col">
-                <SearchBar user={user} />
+                <TopBar user={user} />
                 <div className="flex-1 flex">
                     <div className="w-full">
 
