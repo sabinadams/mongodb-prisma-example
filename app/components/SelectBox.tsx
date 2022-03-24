@@ -18,14 +18,14 @@ export function SelectBox({
     id?: string,
     name?: string,
     label?: string,
-    value: any,
+    value?: any,
     onChange?: (...args: any) => any
 }) {
     return (
         <div>
             <label htmlFor={id} className="text-blue-600 font-semibold">{label}</label>
             <div className={`flex items-center ${containerClassName} my-2`}>
-                <select className={`${className} appearance-none`} id={id} name={name} onChange={onChange} value={value}>
+                <select className={`${className} appearance-none`} id={id} name={name} onChange={onChange} value={value || ''}>
                     {
                         options.map(option => (
                             <option key={option.name} value={option.value}>

@@ -18,33 +18,39 @@ model User {
   email     String   @unique
   password  String
 
-  authoredKudos Kudos[] @relation("AuthoredKudos")
-  kudos         Kudos[] @relation("RecievedKudos")
+  authoredKudos Kudo[]  @relation("AuthoredKudos")
+  kudos         Kudo[]  @relation("RecievedKudos")
   profile       Profile
 }
 
-model Kudos {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+model Kudo {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
   message     String
-  createdAt   DateTime    @default(now())
-  style       KudosStyle?
-  author      User        @relation(references: [id], fields: [authorId], name: "AuthoredKudos", onDelete: Cascade)
-  authorId    String      @db.ObjectId
-  recipient   User        @relation(references: [id], fields: [recipientId], "RecievedKudos", onDelete: Cascade)
-  recipientId String      @db.ObjectId
+  createdAt   DateTime   @default(now())
+  style       KudoStyle?
+  author      User       @relation(references: [id], fields: [authorId], name: "AuthoredKudos", onDelete: Cascade)
+  authorId    String     @db.ObjectId
+  recipient   User       @relation(references: [id], fields: [recipientId], "RecievedKudos", onDelete: Cascade)
+  recipientId String     @db.ObjectId
 }
 
-type KudosStyle {
-  color     String?
-  textColor String?
-  emoji     String?
+type KudoStyle {
+  backgroundColor Color? @default(YELLOW)
+  textColor       Color? @default(WHITE)
+  emoji           Emoji? @default(THUMBSUP)
 }
 
 type Profile {
   firstName      String
   lastName       String
   profilePicture String?
-  department     Department?
+  department     Department? @default(MARKETING)
+}
+
+enum Emoji {
+  THUMBSUP
+  PARTY
+  HANDSUP
 }
 
 enum Department {
@@ -52,4 +58,12 @@ enum Department {
   SALES
   ENGINEERING
   HR
+}
+
+enum Color {
+  RED
+  GREEN
+  YELLOW
+  BLUE
+  WHITE
 }

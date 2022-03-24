@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     })
 
     // Select the most recent three kudos
-    const recentKudos = await prisma.kudos.findMany({
+    const recentKudos = await prisma.kudo.findMany({
         take: 3,
         orderBy: {
             createdAt: 'desc'
