@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
 import { Modal } from "~/components/Modal";
 import { getUser, requireUserId } from "~/util/session.server";
-import { prisma, Color, Emoji } from '~/util/db.server'
+import { prisma, Color, Emoji, KudoStyle } from '~/util/db.server'
 import { UserCircle } from "~/components/UserCircle";
 import { SelectBox } from "~/components/SelectBox";
 import { Kudo } from '~/components/Kudo'
@@ -81,8 +81,8 @@ export default function AddWebhookModal() {
         style: {
             backgroundColor: 'RED',
             textColor: 'WHITE',
-            emoji: 'THUMBSUP'
-        }
+            emoji: 'THUMBSUP',
+        } as KudoStyle
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {

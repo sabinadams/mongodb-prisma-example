@@ -4,13 +4,19 @@ import { getUser, requireUserId } from '~/util/session.server'
 import { UserBar } from '~/components/UserBar'
 import { TopBar } from '~/components/TopBar'
 import { RecentKudosBar } from '~/components/RecentKudosBar'
-import { prisma } from '~/util/db.server'
+import { prisma, KudoStyle, Profile } from '~/util/db.server'
 import { UserWithProfile } from '~/util/interfaces'
 
 interface LoaderResponse {
     users: UserWithProfile[],
     user: UserWithProfile,
-    recentKudos: { recipient: UserWithProfile }[]
+    recentKudos: {
+        style: KudoStyle
+        recipient: {
+            id: string,
+            profile: Profile
+        }
+    }[]
 }
 
 // If the user isn't logged in, redirect to the login screen
@@ -37,6 +43,11 @@ export const loader: LoaderFunction = async ({ request }) => {
             createdAt: 'desc'
         },
         select: {
+            style: {
+                select: {
+                    emoji: true
+                }
+            },
             recipient: {
                 select: {
                     id: true,
