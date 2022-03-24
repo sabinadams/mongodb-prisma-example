@@ -1,9 +1,10 @@
 import { UserCircle } from '~/components/UserCircle'
 import { UserWithProfile } from '~/util/interfaces'
-
+import { useNavigate } from 'remix'
 export function UserBar({ users }: {
     users: UserWithProfile[]
 }) {
+    const navigate = useNavigate()
     return (
         <div className="w-1/6 bg-gray-200 flex flex-col">
             <div className="text-center bg-gray-300 h-20 flex items-center justify-center">
@@ -15,6 +16,7 @@ export function UserBar({ users }: {
                         key={user.id}
                         profile={user.profile}
                         className="h-24 w-24 mx-auto flex-shrink-0"
+                        onClick={() => navigate(`/home/kudo/${user.id}`)}
                     />
                 )}
             </div>

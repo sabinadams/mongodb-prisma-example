@@ -44,7 +44,7 @@ export const action: ActionFunction = async ({ request }) => {
         },
         data: {
             profile: {
-                set: {
+                update: {
                     firstName,
                     lastName,
                     department: department as Department
