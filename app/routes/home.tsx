@@ -3,20 +3,14 @@ import { json, LoaderFunction, useLoaderData, Outlet } from 'remix'
 import { getUser, requireUserId } from '~/util/session.server'
 import { UserBar } from '~/components/UserBar'
 import { TopBar } from '~/components/TopBar'
+import { Kudo } from '~/components/Kudo'
 import { RecentKudosBar } from '~/components/RecentKudosBar'
-import { prisma, KudoStyle, Profile } from '~/util/db.server'
-import { UserWithProfile } from '~/util/interfaces'
+import { prisma, Kudo as IKudo, Profile } from '~/util/db.server'
 
-interface LoaderResponse {
-    users: UserWithProfile[],
-    user: UserWithProfile,
-    recentKudos: {
-        style: KudoStyle
-        recipient: {
-            id: string,
-            profile: Profile
-        }
-    }[]
+interface KudoWithAuthor extends IKudo {
+    author: {
+        profile: Profile
+    }
 }
 
 // If the user isn't logged in, redirect to the login screen
@@ -36,6 +30,21 @@ export const loader: LoaderFunction = async ({ request }) => {
         }
     })
 
+    const kudos = await prisma.kudo.findMany({
+        select: {
+            id: true,
+            style: true,
+            message: true,
+            author: {
+                select: {
+                    profile: true
+                }
+            }
+        },
+        where: {
+            recipientId: userId
+        }
+    })
     // Select the most recent three kudos
     const recentKudos = await prisma.kudo.findMany({
         take: 3,
@@ -60,12 +69,13 @@ export const loader: LoaderFunction = async ({ request }) => {
     return json({
         users,
         recentKudos,
-        user
+        user,
+        kudos
     })
 }
 
 export default function Index() {
-    const { recentKudos, users, user } = useLoaderData<LoaderResponse>()
+    const { recentKudos, users, user, kudos } = useLoaderData()
 
     return <Layout>
         <Outlet />
@@ -74,8 +84,12 @@ export default function Index() {
             <div className="flex-1 flex flex-col">
                 <TopBar user={user} />
                 <div className="flex-1 flex">
-                    <div className="w-full">
-
+                    <div className="w-full p-10">
+                        {
+                            kudos.map((kudo: KudoWithAuthor) => (
+                                <Kudo key={kudo.id} kudo={kudo} profile={kudo.author.profile} />
+                            ))
+                        }
                     </div>
                     <RecentKudosBar kudos={recentKudos} />
                 </div>
