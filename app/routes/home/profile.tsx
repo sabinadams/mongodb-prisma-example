@@ -3,7 +3,7 @@ import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoade
 import { FormField } from "~/components/FormField";
 import { Modal } from "~/components/Modal";
 import { SelectBox } from "~/components/SelectBox";
-import { prisma, Department } from "~/util/db.server";
+import { prisma, Department, Profile } from "~/util/db.server";
 import { UserWithProfile } from "~/util/interfaces";
 import { getUser, requireUserId } from "~/util/session.server";
 import { validateName } from "~/util/validators.server";
@@ -62,10 +62,11 @@ export default function AddWebhookModal() {
     const [formError, setFormError] = useState(actionData?.error || '')
     const firstLoad = useRef(true)
     const departments = [{ name: 'HR', value: 'HR' }, { name: 'Engineering', value: 'ENGINEERING' }, { name: 'Sales', value: 'SALES' }, { name: 'Marketing', value: 'MARKETING' }]
-    const [formData, setFormData] = useState({
-        firstName: actionData?.fields?.firstName || user.profile.firstName,
-        lastName: actionData?.fields?.lastName || user.profile.lastName,
-        department: actionData?.fields?.dedpartment || (user.profile.department || 'MARKETING')
+    const [formData, setFormData] = useState<Profile>({
+        firstName: actionData?.fields?.firstName || user?.profile?.firstName,
+        lastName: actionData?.fields?.lastName || user?.profile?.lastName,
+        department: actionData?.fields?.dedpartment || (user?.profile?.department || 'MARKETING'),
+        profilePicture: user?.profile?.profilePicture || ''
     })
 
     useEffect(() => {
@@ -83,8 +84,20 @@ export default function AddWebhookModal() {
         setFormData(form => ({ ...form, [field]: event.target.value }))
     }
 
-    const handleFileUpload = (file: File) => {
+    const handleFileUpload = async (file: File) => {
+        let inputFormData = new FormData()
+        inputFormData.append('profile-pic', file)
 
+        const response = await fetch('/avatar', {
+            method: 'POST',
+            body: inputFormData
+        })
+        const { imageUrl } = await response.json()
+
+        setFormData({
+            ...formData,
+            profilePicture: imageUrl
+        })
     }
 
     return (
@@ -96,10 +109,7 @@ export default function AddWebhookModal() {
                 </div>
                 <div className="flex">
                     <div className="w-1/3">
-                        <form method="post" action="/avatar">
-                            <input type="hidden" name="userId" value={user.id} />
-                            <FileUploader onChange={handleFileUpload} />
-                        </form>
+                        <FileUploader onChange={handleFileUpload} imageUrl={formData.profilePicture || ''} />
                     </div>
                     <div className="flex-1">
                         <form method="post">

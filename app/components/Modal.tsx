@@ -18,7 +18,7 @@ export const Modal: React.FC<props> = ({ children, isOpen, ariaLabel, className 
                 aria-labelledby={ariaLabel ?? " modal-title"}
                 role="dialog"
                 aria-modal="true"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate('/home')}
             >
             </div>
             <div className="fixed inset-0 pointer-events-none flex justify-center items-center">
