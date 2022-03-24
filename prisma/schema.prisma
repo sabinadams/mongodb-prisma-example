@@ -35,9 +35,9 @@ model Kudo {
 }
 
 type KudoStyle {
-  backgroundColor Color? @default(YELLOW)
-  textColor       Color? @default(WHITE)
-  emoji           Emoji? @default(THUMBSUP)
+  backgroundColor Color @default(YELLOW)
+  textColor       Color @default(WHITE)
+  emoji           Emoji @default(THUMBSUP)
 }
 
 type Profile {

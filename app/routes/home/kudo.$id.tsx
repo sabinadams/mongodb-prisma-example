@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
 import { Modal } from "~/components/Modal";
 import { getUser, requireUserId } from "~/util/session.server";
-import { prisma } from '~/util/db.server'
+import { prisma, Color, Emoji } from '~/util/db.server'
 import { UserCircle } from "~/components/UserCircle";
 import { SelectBox } from "~/components/SelectBox";
 import { Kudo } from '~/components/Kudo'
@@ -24,12 +24,58 @@ export const action: ActionFunction = async ({ request }) => {
     const form = await request.formData();
     const userId = await requireUserId(request)
 
+    const message = form.get('message')
+    const backgroundColor = form.get('backgroundColor')
+    const textColor = form.get('textColor')
+    const emoji = form.get('emoji')
+    const recipientId = form.get('recipientId')
+
+    if (
+        typeof message !== 'string'
+        || typeof recipientId !== 'string'
+        || typeof backgroundColor !== 'string'
+        || typeof textColor !== 'string'
+        || typeof emoji !== 'string'
+    ) {
+        return json({ error: `Invalid Form Data` }, { status: 400 });
+    }
+
+    if (!message.length) {
+        return json({ error: `Please provide a message.` }, { status: 400 });
+    }
+
+    if (!recipientId.length) {
+        return json({ error: `No recipient found...` }, { status: 400 });
+    }
+
+    await prisma.kudo.create({
+        data: {
+            message,
+            author: {
+                connect: {
+                    id: userId
+                }
+            },
+            recipient: {
+                connect: {
+                    id: recipientId
+                }
+            },
+            style: {
+                backgroundColor: backgroundColor as Color,
+                textColor: textColor as Color,
+                emoji: emoji as Emoji
+            }
+        }
+    })
+
     return redirect('/home')
 }
 
 export default function AddWebhookModal() {
     const actionData = useActionData()
     const data = useLoaderData()
+    const [formError, setFormError] = useState(actionData?.error || '')
     const [formData, setFormData] = useState({
         message: '',
         style: {
@@ -79,7 +125,11 @@ export default function AddWebhookModal() {
     }]
     return (
         <Modal isOpen={true} className="w-2/3 p-10">
+            <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full mb-2">
+                {formError}
+            </div>
             <form method="post">
+                <input type="hidden" value={data.recipient.id} name="recipientId" />
                 <div className="flex flex-col md:flex-row gap-y-2 md:gap-y-0">
                     <div className="text-center flex flex-col items-center gap-y-2 pr-8">
                         <UserCircle profile={data.recipient.profile} className="h-24 w-24" />

@@ -22,7 +22,7 @@ export function Kudo({ profile, kudo }: { profile: Profile, kudo: Partial<IKudo>
         PARTY: '🎉',
         HANDSUP: '🙌🏻'
     }
-    console.log(kudo)
+
     return (
         <div className={`flex ${backgroundColorMap[kudo.style?.backgroundColor || 'RED']} p-4 rounded-xl w-full gap-x-2 relative`}>
             <div>
