@@ -4,10 +4,12 @@ export const FileUploader = ({ onChange, imageUrl }: { onChange: (file: File) =>
     const [draggingOver, setDraggingOver] = useState(false)
     const dropRef = useRef(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
+
     const preventDefaults = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         e.stopPropagation()
     }
+
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         preventDefaults(e)
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
@@ -24,7 +26,7 @@ export const FileUploader = ({ onChange, imageUrl }: { onChange: (file: File) =>
 
     return (
         <div ref={dropRef}
-            className={`${draggingOver ? 'border-4 border-dashed border-yellow-300 border-rounded' : ''} rounded-full relative w-24 h-24 flex justify-center items-center bg-gray-400 transition duration-300 ease-in-out hover:bg-gray-500 cursor-pointer`}
+            className={`${draggingOver ? 'border-4 border-dashed border-yellow-300 border-rounded' : ''} group rounded-full relative w-24 h-24 flex justify-center items-center bg-gray-400 transition duration-300 ease-in-out hover:bg-gray-500 cursor-pointer`}
             style={{
                 backgroundSize: "cover",
                 ...(imageUrl ? { backgroundImage: `url(${imageUrl})` } : {}),
@@ -40,11 +42,11 @@ export const FileUploader = ({ onChange, imageUrl }: { onChange: (file: File) =>
         >
             {
                 imageUrl && (
-                    <div className="absolute w-full h-full bg-blue-400 opacity-50 rounded-full transition duration-300 ease-in-out hover:opacity-0"></div>
+                    <div className="absolute w-full h-full bg-blue-400 opacity-50 rounded-full transition duration-300 ease-in-out group-hover:opacity-0"></div>
                 )
             }
             {
-                <p className="font-extrabold text-4xl text-gray-200 cursor-pointer select-none pointer-events-none z-10">+</p>
+                <p className="font-extrabold text-4xl text-gray-200 cursor-pointer select-none transition duration-300 ease-in-out group-hover:opacity-0 pointer-events-none z-10">+</p>
             }
             <input type="file" ref={fileInputRef} onChange={handleChange} className="hidden" />
         </div>

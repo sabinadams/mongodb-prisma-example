@@ -1,4 +1,4 @@
-import { ActionFunction, json, redirect } from "remix";
+import { ActionFunction, json } from "remix";
 import { requireUserId } from "~/util/session.server";
 import { uploadAvatar } from "~/util/s3.server";
 import { prisma } from "~/util/db.server";

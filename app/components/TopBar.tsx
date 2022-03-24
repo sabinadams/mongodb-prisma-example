@@ -2,6 +2,7 @@ import { UserWithProfile } from "~/util/interfaces"
 import { SearchBox } from "./SearchBox"
 import { SelectBox } from "./SelectBox"
 import { useNavigate } from "remix"
+import { UserCircle } from "./UserCircle"
 
 export function TopBar({ user }: { user: UserWithProfile }) {
     const navigate = useNavigate()
@@ -28,9 +29,11 @@ export function TopBar({ user }: { user: UserWithProfile }) {
                 Search
             </button>
             <div className="flex-1" />
-            <div className="cursor-pointer h-14 w-14 bg-gray-400 rounded-full flex justify-center items-center transition duration-300 ease-in-out hover:scale-110 hover:border-2 hover:border-yellow-300" onClick={() => navigate('/home/profile')}>
-                <h2>{user.profile.firstName.charAt(0).toUpperCase()}{user.profile.lastName.charAt(0).toUpperCase()}</h2>
-            </div>
+            <UserCircle
+                profile={user.profile}
+                onClick={() => navigate('/home/profile')}
+                className="h-14 w-14 transition duration-300 ease-in-out hover:scale-110 hover:border-2 hover:border-yellow-300"
+            />
         </form>
     )
 }
