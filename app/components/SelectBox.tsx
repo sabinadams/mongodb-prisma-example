@@ -25,10 +25,10 @@ export function SelectBox({
         <div>
             <label htmlFor={id} className="text-blue-600 font-semibold">{label}</label>
             <div className={`flex items-center ${containerClassName} my-2`}>
-                <select className={`${className} appearance-none`} id={id} name={name} onChange={onChange}>
+                <select className={`${className} appearance-none`} id={id} name={name} onChange={onChange} value={value}>
                     {
                         options.map(option => (
-                            <option key={name} selected={option.value === value}>
+                            <option key={option.name} value={option.value}>
                                 {option.name}
                             </option>
                         ))

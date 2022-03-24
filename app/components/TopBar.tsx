@@ -10,7 +10,7 @@ export function TopBar({ user }: { user: UserWithProfile }) {
         <form className="w-full px-6 flex items-center gap-x-4 border-b-4 border-b-blue-900 border-opacity-30 h-20">
             <SearchBox className="w-full rounded-xl px-3 py-2" containerClassName='w-2/5' />
             <SelectBox
-                value={''}
+                value={'date'}
                 className="w-full rounded-xl px-3 py-2 text-gray-400"
                 containerClassName='w-40'
                 options={[{

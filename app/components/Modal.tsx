@@ -26,6 +26,6 @@ export const Modal: React.FC<props> = ({ children, isOpen, ariaLabel, className 
                     {children}
                 </div>
             </div>
-        </Portal >
+        </Portal>
     )
 }
