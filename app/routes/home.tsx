@@ -18,6 +18,54 @@ export const loader: LoaderFunction = async ({ request }) => {
     // Handles redirect if not authenticated
     const userId = await requireUserId(request)
     const user = await getUser(request)
+    const url = new URL(request.url);
+    const sort = url.searchParams.get("sort");
+    const filter = url.searchParams.get("filter");
+    let sortFilter = {}
+    if (sort) {
+        if (sort === 'date') {
+            sortFilter = {
+                createdAt: 'desc'
+            }
+        }
+        if (sort === 'sender') {
+            sortFilter = {
+                author: {
+                    profile: {
+                        firstName: 'asc'
+                    }
+                }
+            }
+        }
+        if (sort === 'emoji') {
+            sortFilter = {
+                style: {
+                    emoji: 'asc'
+                }
+            }
+        }
+    }
+    let textFilter = {}
+    if (filter) {
+        textFilter = {
+            OR: [
+                {
+                    message: {
+                        mode: 'insensitive',
+                        contains: filter
+                    }
+                },
+                {
+                    author: {
+                        OR: [
+                            { profile: { is: { firstName: { mode: 'insensitive', contains: filter } } } },
+                            { profile: { is: { lastName: { mode: 'insensitive', contains: filter } } } },
+                        ]
+                    }
+                },
+            ]
+        }
+    }
 
     // Select all the users for the users bar (except yourself)
     const users = await prisma.user.findMany({
@@ -41,8 +89,12 @@ export const loader: LoaderFunction = async ({ request }) => {
                 }
             }
         },
+        orderBy: {
+            ...sortFilter
+        },
         where: {
-            recipientId: userId
+            recipientId: userId,
+            ...textFilter
         }
     })
     // Select the most recent three kudos
@@ -76,7 +128,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
     const { recentKudos, users, user, kudos } = useLoaderData()
-
     return <Layout>
         <Outlet />
         <div className="h-full flex">
@@ -84,7 +135,7 @@ export default function Index() {
             <div className="flex-1 flex flex-col">
                 <TopBar user={user} />
                 <div className="flex-1 flex">
-                    <div className="w-full p-10">
+                    <div className="w-full p-10 flex flex-col gap-y-4">
                         {
                             kudos.map((kudo: KudoWithAuthor) => (
                                 <Kudo key={kudo.id} kudo={kudo} profile={kudo.author.profile} />
