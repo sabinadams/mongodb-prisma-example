@@ -6,6 +6,7 @@ import { prisma, Color, Emoji, KudoStyle } from '~/util/db.server'
 import { UserCircle } from "~/components/UserCircle";
 import { SelectBox } from "~/components/SelectBox";
 import { Kudo } from '~/components/Kudo'
+import { colorMap, emojiMap } from "~/util/kudo-config";
 export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await getUser(request)
     const recipient = await prisma.user.findUnique({
@@ -96,33 +97,16 @@ export default function AddWebhookModal() {
             }
         }))
     }
-    const colors = [{
-        value: 'RED',
-        name: 'Red'
-    }, {
-        value: 'BLUE',
-        name: 'Blue'
-    }, {
-        value: 'YELLOW',
-        name: 'Yellow'
-    }, {
-        value: 'GREEN',
-        name: 'Green'
-    }, {
-        value: 'WHITE',
-        name: 'White'
-    }]
+    const getOptions = (data: any) => Object.keys(data).reduce((acc: any[], curr) => {
+        acc.push({
+            name: curr.charAt(0).toUpperCase() + curr.slice(1).toLowerCase(),
+            value: curr
+        })
+        return acc
+    }, [])
+    const colors = getOptions(colorMap)
+    const emojis = getOptions(emojiMap)
 
-    const emojis = [{
-        value: 'THUMBSUP',
-        name: 'Thumbs Up'
-    }, {
-        value: 'PARTY',
-        name: 'Party'
-    }, {
-        value: 'HANDSUP',
-        name: 'Hands Up'
-    }]
     return (
         <Modal isOpen={true} className="w-2/3 p-10">
             <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full mb-2">

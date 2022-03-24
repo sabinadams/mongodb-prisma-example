@@ -1,27 +1,8 @@
 import { UserCircle } from '~/components/UserCircle'
 import { Profile, Kudo as IKudo } from '~/util/db.server'
+import { colorMap, backgroundColorMap, emojiMap } from '~/util/kudo-config'
 
 export function Kudo({ profile, kudo }: { profile: Profile, kudo: Partial<IKudo> }) {
-    const colorMap = {
-        RED: 'text-red-400',
-        GREEN: 'text-green-400',
-        BLUE: 'text-blue-400',
-        WHITE: 'text-white',
-        YELLOW: 'text-yellow-300'
-    }
-    const backgroundColorMap = {
-        RED: 'bg-red-400',
-        GREEN: 'bg-green-400',
-        BLUE: 'bg-blue-400',
-        WHITE: 'bg-white',
-        YELLOW: 'bg-yellow-300'
-    }
-
-    const emojiMap = {
-        THUMBSUP: '👍',
-        PARTY: '🎉',
-        HANDSUP: '🙌🏻'
-    }
 
     return (
         <div className={`flex ${backgroundColorMap[kudo.style?.backgroundColor || 'RED']} p-4 rounded-xl w-full gap-x-2 relative`}>
