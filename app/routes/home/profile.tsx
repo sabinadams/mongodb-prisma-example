@@ -56,7 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect('/home')
 }
 
-export default function AddWebhookModal() {
+export default function ProfileSettingsModal() {
     const actionData = useActionData()
     const { user } = useLoaderData<{ user: UserWithProfile }>()
     const [formError, setFormError] = useState(actionData?.error || '')
