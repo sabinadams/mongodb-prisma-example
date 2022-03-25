@@ -9,7 +9,6 @@ const s3 = new S3({
 });
 
 const uploadHandler: UploadHandler = async ({ name, filename, stream }) => {
-  console.log(filename);
   if (name !== "profile-pic") {
     stream.resume();
     return;
