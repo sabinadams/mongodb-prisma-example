@@ -7,6 +7,7 @@ import { UserCircle } from "~/components/UserCircle";
 import { SelectBox } from "~/components/SelectBox";
 import { Kudo } from '~/components/Kudo'
 import { colorMap, emojiMap } from "~/util/kudo-config";
+
 export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await getUser(request)
     const recipient = await prisma.user.findUnique({
@@ -73,7 +74,7 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect('/home')
 }
 
-export default function AddWebhookModal() {
+export default function KudoModal() {
     const actionData = useActionData()
     const data = useLoaderData()
     const [formError, setFormError] = useState(actionData?.error || '')
