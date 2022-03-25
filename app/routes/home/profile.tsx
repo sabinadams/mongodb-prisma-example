@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
+import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData, MetaFunction } from "remix";
 
 import { FormField } from "~/components/FormField";
 import { Modal } from "~/components/Modal";
@@ -11,6 +11,12 @@ import { UserWithProfile } from "~/util/interfaces";
 import { getUser, requireUserId } from "~/util/session.server";
 import { validateName } from "~/util/validators.server";
 import { updateUser } from "~/util/users.server";
+
+export const meta: MetaFunction = ({ data }: { data: { user: UserWithProfile } }) => ({
+    charset: "utf-8",
+    title: `${data.user.profile.firstName}'s Profile Settings`,
+    viewport: "width=device-width,initial-scale=1",
+});
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await getUser(request)

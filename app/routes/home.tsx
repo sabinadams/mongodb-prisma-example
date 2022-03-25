@@ -90,6 +90,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
     const { recentKudos, users, user, kudos } = useLoaderData()
+
     return <Layout>
         <Outlet />
         <div className="h-full flex">

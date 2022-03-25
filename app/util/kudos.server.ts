@@ -5,7 +5,7 @@ export const getFilteredKudos = async (
   sortFilter: Prisma.KudoOrderByWithRelationInput,
   whereFilter: Prisma.KudoWhereInput
 ) => {
-  await prisma.kudo.findMany({
+  return await prisma.kudo.findMany({
     select: {
       id: true,
       style: true,

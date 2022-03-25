@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
+import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData, MetaFunction } from "remix";
 
 import { Modal } from "~/components/Modal";
 import { UserCircle } from "~/components/UserCircle";
@@ -11,6 +11,13 @@ import { Color, Emoji, KudoStyle } from '~/util/db.server'
 import { colorMap, emojiMap } from "~/util/constants";
 import { getUserById } from '~/util/users.server'
 import { createKudo } from "~/util/kudos.server";
+import { UserWithProfile } from "~/util/interfaces";
+
+export const meta: MetaFunction = ({ data }: { data: { user: UserWithProfile } }) => ({
+    charset: "utf-8",
+    title: `Kudos for ${data.user.profile.firstName}`,
+    viewport: "width=device-width,initial-scale=1",
+});
 
 export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await getUser(request)
