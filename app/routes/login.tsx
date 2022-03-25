@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { ActionFunction, json, LoaderFunction, redirect, useActionData } from 'remix'
+
 import { FormField } from '~/components/FormField'
 import { Layout } from '~/components/Layout'
+
 import { createUserSession, getUser, login, register } from '~/util/session.server'
 import { validateEmail, validatePassword, validateName } from '~/util/validators.server'
 
@@ -66,13 +68,13 @@ export const action: ActionFunction = async ({ request }) => {
             return json({ error: `Invalid Form Data` }, { status: 400 });
     }
 }
+
 export default function Login() {
     const actionData = useActionData()
+    const firstLoad = useRef(true)
     const [errors, setErrors] = useState(actionData?.errors || {})
     const [formError, setFormError] = useState(actionData?.error || '')
     const [action, setAction] = useState(actionData?.form || 'login')
-    const formRef = useRef<HTMLFormElement>(null)
-    const firstLoad = useRef(true)
     const [formData, setFormData] = useState({
         email: actionData?.fields?.email || '',
         password: actionData?.fields?.password || '',
@@ -123,14 +125,12 @@ export default function Login() {
                 action === 'login' ? 'Log In To Give Some Praise!' : 'Sign Up To Get Started!'
             }</p>
 
-            <form ref={formRef} method="POST" className="rounded-2xl bg-gray-200 p-6 w-96">
+            <form method="POST" className="rounded-2xl bg-gray-200 p-6 w-96">
                 <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
                     {formError}
                 </div>
                 <input type="hidden" name="action" value={action} />
-                {/* Email */}
                 <FormField htmlFor="email" label='Email' error={errors?.email} onChange={e => handleInputChange(e, 'email')} value={formData.email} />
-                {/* Password */}
                 <FormField htmlFor="password" label='Password' type="password" error={errors?.password} onChange={e => handleInputChange(e, 'password')} value={formData.password} />
 
                 {/* Signup Specific Fields */}

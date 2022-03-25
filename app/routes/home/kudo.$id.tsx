@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
+
 import { Modal } from "~/components/Modal";
-import { getUser, requireUserId } from "~/util/session.server";
-import { prisma, Color, Emoji, KudoStyle } from '~/util/db.server'
 import { UserCircle } from "~/components/UserCircle";
 import { SelectBox } from "~/components/SelectBox";
 import { Kudo } from '~/components/Kudo'
+
+import { getUser, requireUserId } from "~/util/session.server";
+import { Color, Emoji, KudoStyle } from '~/util/db.server'
 import { colorMap, emojiMap } from "~/util/kudo-config";
+import { getUserById } from '~/util/users.server'
+import { createKudo } from "~/util/kudos.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await getUser(request)
-    const recipient = await prisma.user.findUnique({
-        select: {
-            id: true,
-            profile: true
-        },
-        where: {
-            id: params.id
-        }
-    })
+
+    if (typeof params.id !== 'string') {
+        return redirect('/home')
+    }
+
+    const recipient = await getUserById(params.id)
+
     return json({ user, recipient })
 }
 
@@ -50,26 +52,16 @@ export const action: ActionFunction = async ({ request }) => {
         return json({ error: `No recipient found...` }, { status: 400 });
     }
 
-    await prisma.kudo.create({
-        data: {
-            message,
-            author: {
-                connect: {
-                    id: userId
-                }
-            },
-            recipient: {
-                connect: {
-                    id: recipientId
-                }
-            },
-            style: {
-                backgroundColor: backgroundColor as Color,
-                textColor: textColor as Color,
-                emoji: emoji as Emoji
-            }
+    await createKudo(
+        message,
+        userId,
+        recipientId,
+        {
+            backgroundColor: backgroundColor as Color,
+            textColor: textColor as Color,
+            emoji: emoji as Emoji
         }
-    })
+    )
 
     return redirect('/home')
 }

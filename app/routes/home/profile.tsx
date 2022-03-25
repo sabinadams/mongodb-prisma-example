@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ActionFunction, json, useActionData, redirect, LoaderFunction, useLoaderData } from "remix";
+
 import { FormField } from "~/components/FormField";
 import { Modal } from "~/components/Modal";
 import { SelectBox } from "~/components/SelectBox";
-import { prisma, Department, Profile } from "~/util/db.server";
+import { FileUploader } from '~/components/FileUploader';
+
+import { Department, Profile } from "~/util/db.server";
 import { UserWithProfile } from "~/util/interfaces";
 import { getUser, requireUserId } from "~/util/session.server";
 import { validateName } from "~/util/validators.server";
-import { FileUploader } from '~/components/FileUploader';
+import { updateUser } from "~/util/users.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await getUser(request)
@@ -29,6 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
     ) {
         return json({ error: `Invalid Form Data` }, { status: 400 });
     }
+
     const errors = {
         firstName: validateName(firstName),
         lastName: validateName(lastName),
@@ -38,19 +42,10 @@ export const action: ActionFunction = async ({ request }) => {
     if (Object.values(errors).some(Boolean))
         return json({ errors, fields: { department, firstName, lastName } }, { status: 400 });
 
-    await prisma.user.update({
-        where: {
-            id: userId,
-        },
-        data: {
-            profile: {
-                update: {
-                    firstName,
-                    lastName,
-                    department: department as Department
-                }
-            }
-        }
+    await updateUser(userId, {
+        firstName,
+        lastName,
+        department: department as Department
     })
 
     return redirect('/home')

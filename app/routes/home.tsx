@@ -1,11 +1,15 @@
 import { Layout } from '~/components/Layout'
 import { json, LoaderFunction, useLoaderData, Outlet } from 'remix'
-import { getUser, requireUserId } from '~/util/session.server'
+
 import { UserBar } from '~/components/UserBar'
 import { TopBar } from '~/components/TopBar'
 import { Kudo } from '~/components/Kudo'
 import { RecentKudosBar } from '~/components/RecentKudosBar'
-import { prisma, Kudo as IKudo, Profile } from '~/util/db.server'
+
+import { getUser, requireUserId } from '~/util/session.server'
+import { Prisma, Kudo as IKudo, Profile } from '~/util/db.server'
+import { getOtherUsers } from '~/util/users.server'
+import { getRecentKudos, getFilteredKudos } from '~/util/kudos.server'
 
 interface KudoWithAuthor extends IKudo {
     author: {
@@ -18,10 +22,13 @@ export const loader: LoaderFunction = async ({ request }) => {
     // Handles redirect if not authenticated
     const userId = await requireUserId(request)
     const user = await getUser(request)
+
+    // Pull out our search & sort criteria
     const url = new URL(request.url);
     const sort = url.searchParams.get("sort");
     const filter = url.searchParams.get("filter");
-    let sortFilter = {}
+
+    let sortFilter: Prisma.KudoOrderByWithRelationInput = {}
     if (sort) {
         if (sort === 'date') {
             sortFilter = {
@@ -45,7 +52,8 @@ export const loader: LoaderFunction = async ({ request }) => {
             }
         }
     }
-    let textFilter = {}
+
+    let textFilter: Prisma.KudoWhereInput = {}
     if (filter) {
         textFilter = {
             OR: [
@@ -68,55 +76,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
 
     // Select all the users for the users bar (except yourself)
-    const users = await prisma.user.findMany({
-        select: {
-            id: true,
-            profile: true
-        },
-        where: {
-            id: { not: userId }
-        }
-    })
-
-    const kudos = await prisma.kudo.findMany({
-        select: {
-            id: true,
-            style: true,
-            message: true,
-            author: {
-                select: {
-                    profile: true
-                }
-            }
-        },
-        orderBy: {
-            ...sortFilter
-        },
-        where: {
-            recipientId: userId,
-            ...textFilter
-        }
-    })
-    // Select the most recent three kudos
-    const recentKudos = await prisma.kudo.findMany({
-        take: 3,
-        orderBy: {
-            createdAt: 'desc'
-        },
-        select: {
-            style: {
-                select: {
-                    emoji: true
-                }
-            },
-            recipient: {
-                select: {
-                    id: true,
-                    profile: true
-                }
-            }
-        }
-    })
+    const users = await getOtherUsers(userId)
+    const recentKudos = await getRecentKudos()
+    const kudos = await getFilteredKudos(userId, sortFilter, textFilter)
 
     return json({
         users,
@@ -137,9 +99,9 @@ export default function Index() {
                 <div className="flex-1 flex">
                     <div className="w-full p-10 flex flex-col gap-y-4">
                         {
-                            kudos.map((kudo: KudoWithAuthor) => (
+                            kudos.map((kudo: KudoWithAuthor) =>
                                 <Kudo key={kudo.id} kudo={kudo} profile={kudo.author.profile} />
-                            ))
+                            )
                         }
                     </div>
                     <RecentKudosBar kudos={recentKudos} />
