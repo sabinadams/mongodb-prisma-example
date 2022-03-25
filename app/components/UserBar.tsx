@@ -1,6 +1,7 @@
+import { useNavigate } from 'remix'
 import { UserCircle } from '~/components/UserCircle'
 import { UserWithProfile } from '~/util/interfaces'
-import { useNavigate } from 'remix'
+
 export function UserBar({ users }: {
     users: UserWithProfile[]
 }) {

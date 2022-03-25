@@ -1,5 +1,5 @@
-import { useNavigate } from 'remix';
-import { Portal } from './Portal'
+import { useNavigate } from "remix";
+import { Portal } from "./Portal";
 
 interface props {
     children: React.ReactNode,
@@ -15,7 +15,7 @@ export const Modal: React.FC<props> = ({ children, isOpen, ariaLabel, className 
         <Portal wrapperId="modal">
             <div
                 className="fixed inset-0 overflow-y-auto bg-gray-600 bg-opacity-80"
-                aria-labelledby={ariaLabel ?? " modal-title"}
+                aria-labelledby={ariaLabel ?? "modal-title"}
                 role="dialog"
                 aria-modal="true"
                 onClick={() => navigate('/home')}

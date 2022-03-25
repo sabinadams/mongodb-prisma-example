@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 
 export const FileUploader = ({ onChange, imageUrl }: { onChange: (file: File) => any, imageUrl?: string }) => {
     const [draggingOver, setDraggingOver] = useState(false)
-    const dropRef = useRef(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
+    const dropRef = useRef(null)
 
     const preventDefaults = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()

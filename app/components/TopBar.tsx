@@ -1,8 +1,11 @@
-import { UserWithProfile } from "~/util/interfaces"
+import { useNavigate, useSearchParams } from "remix"
+
 import { SearchBox } from "./SearchBox"
 import { SelectBox } from "./SelectBox"
-import { useNavigate, useSearchParams } from "remix"
 import { UserCircle } from "./UserCircle"
+
+import { sortOptions } from "~/util/constants"
+import { UserWithProfile } from "~/util/interfaces"
 
 export function TopBar({ user }: { user: UserWithProfile }) {
     const navigate = useNavigate()
@@ -21,16 +24,7 @@ export function TopBar({ user }: { user: UserWithProfile }) {
                 className="w-full rounded-xl px-3 py-2 text-gray-400"
                 containerClassName='w-40'
                 name="sort"
-                options={[{
-                    name: 'Date',
-                    value: 'date'
-                }, {
-                    name: 'Sender Name',
-                    value: 'sender'
-                }, {
-                    name: 'Emoji',
-                    value: 'emoji'
-                }]}
+                options={sortOptions}
             />
             <button type="submit" className="rounded-xl bg-yellow-300 font-semibold text-blue-600 px-3 py-2 transition duration-300 ease-in-out hover:bg-yellow-400 hover:-translate-y-1">
                 Search

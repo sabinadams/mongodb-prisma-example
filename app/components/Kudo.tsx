@@ -1,6 +1,6 @@
 import { UserCircle } from '~/components/UserCircle'
 import { Profile, Kudo as IKudo } from '~/util/db.server'
-import { colorMap, backgroundColorMap, emojiMap } from '~/util/kudo-config'
+import { colorMap, backgroundColorMap, emojiMap } from '~/util/constants'
 
 export function Kudo({ profile, kudo }: { profile: Profile, kudo: Partial<IKudo> }) {
 

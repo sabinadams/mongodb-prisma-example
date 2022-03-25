@@ -8,7 +8,7 @@ import { Kudo } from '~/components/Kudo'
 
 import { getUser, requireUserId } from "~/util/session.server";
 import { Color, Emoji, KudoStyle } from '~/util/db.server'
-import { colorMap, emojiMap } from "~/util/kudo-config";
+import { colorMap, emojiMap } from "~/util/constants";
 import { getUserById } from '~/util/users.server'
 import { createKudo } from "~/util/kudos.server";
 

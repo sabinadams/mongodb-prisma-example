@@ -1,4 +1,4 @@
-import { Profile } from '~/util/db.server'
+import { Profile } from '~/util/db.server';
 
 export function UserCircle({ profile, onClick, className }: {
     profile: Profile,

@@ -1,16 +1,17 @@
-import { Profile, KudoStyle } from '~/util/db.server';
+import { Profile, User, KudoStyle, Kudo } from '~/util/db.server';
 import { UserCircle } from './UserCircle';
-import { emojiMap } from '~/util/kudo-config'
+import { emojiMap } from '~/util/constants'
 
-export function RecentKudosBar({ kudos }: {
-    kudos: {
+type RecentKudosProps = {
+    kudos: ({
         style: KudoStyle
         recipient: {
-            id: string,
             profile: Profile
-        }
-    }[]
-}) {
+        } & Partial<User>
+    } & Partial<Kudo>)[]
+}
+
+export function RecentKudosBar({ kudos }: RecentKudosProps) {
     return (
         <div className="w-1/5 border-l-4 border-l-yellow-300 flex flex-col items-center">
             <h2 className="text-xl text-yellow-300 font-semibold my-6">Recent Kudos</h2>
