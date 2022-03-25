@@ -69,7 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function KudoModal() {
     const actionData = useActionData()
     const data = useLoaderData()
-    const [formError, setFormError] = useState(actionData?.error || '')
+    const [formError] = useState(actionData?.error || '')
     const [formData, setFormData] = useState({
         message: '',
         style: {

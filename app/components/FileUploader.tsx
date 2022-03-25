@@ -41,9 +41,8 @@ export const FileUploader = ({ onChange, imageUrl }: { onChange: (file: File) =>
             onClick={() => fileInputRef.current?.click()}
         >
             {
-                imageUrl && (
-                    <div className="absolute w-full h-full bg-blue-400 opacity-50 rounded-full transition duration-300 ease-in-out group-hover:opacity-0"></div>
-                )
+                imageUrl &&
+                <div className="absolute w-full h-full bg-blue-400 opacity-50 rounded-full transition duration-300 ease-in-out group-hover:opacity-0" />
             }
             {
                 <p className="font-extrabold text-4xl text-gray-200 cursor-pointer select-none transition duration-300 ease-in-out group-hover:opacity-0 pointer-events-none z-10">+</p>

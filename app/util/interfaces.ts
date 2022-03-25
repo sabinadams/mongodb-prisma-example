@@ -15,7 +15,3 @@ export interface RegisterForm {
   firstName: string;
   lastName: string;
 }
-
-export interface UserData extends Partial<User> {
-  profile: Profile;
-}
