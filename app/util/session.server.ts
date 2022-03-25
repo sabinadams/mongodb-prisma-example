@@ -1,7 +1,8 @@
+import { createCookieSessionStorage, json, redirect } from "remix";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db.server";
-import { createCookieSessionStorage, json, redirect } from "remix";
 import { LoginForm, RegisterForm } from "./interfaces";
+import { createUser } from "./users.server";
 
 // We need to define a session secret
 const sessionSecret = process.env.SESSION_SECRET;
@@ -56,22 +57,6 @@ export async function register(user: RegisterForm) {
   return createUserSession(newUser.id, "/");
 }
 
-// Saves a new database
-async function createUser(user: RegisterForm) {
-  const passwordHash = await bcrypt.hash(user.password, 10);
-  const newUser = await prisma.user.create({
-    data: {
-      email: user.email,
-      password: passwordHash,
-      profile: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-    },
-  });
-  return { id: newUser.id, email: user.email };
-}
-
 // Create a session in our session storage bucket
 export async function createUserSession(userId: string, redirectTo: string) {
   const session = await storage.getSession();
@@ -81,19 +66,6 @@ export async function createUserSession(userId: string, redirectTo: string) {
       "Set-Cookie": await storage.commitSession(session),
     },
   });
-}
-
-// Grabs the user's current session (contains the userId)
-function getUserSession(request: Request) {
-  return storage.getSession(request.headers.get("Cookie"));
-}
-
-// Returns the current session user's Id
-export async function getUserId(request: Request) {
-  const session = await getUserSession(request);
-  const userId = session.get("userId");
-  if (!userId || typeof userId !== "string") return null;
-  return userId;
 }
 
 // If the request doesn't have a valid session, redirect to the login screen or a defined redirect route
@@ -136,4 +108,17 @@ export async function logout(request: Request) {
       "Set-Cookie": await storage.destroySession(session),
     },
   });
+}
+
+// Grabs the user's current session (contains the userId)
+function getUserSession(request: Request) {
+  return storage.getSession(request.headers.get("Cookie"));
+}
+
+// Returns the current session user's Id
+async function getUserId(request: Request) {
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+  if (!userId || typeof userId !== "string") return null;
+  return userId;
 }
